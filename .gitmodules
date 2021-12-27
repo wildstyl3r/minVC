@@ -1,0 +1,3 @@
+[submodule "QGrypho"]
+	path = QGrypho
+	url = git://github.com/wildstyl3r/QGrypho
