@@ -27,7 +27,6 @@ void minVC_core::setGraph(string filename)
         i++;
     }
     minCover();
-    minCover();
 }
 
 void minVC_core::setGraph(Graph& G)

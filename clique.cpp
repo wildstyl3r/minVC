@@ -1,4 +1,5 @@
 #include <minvc_core.h>
+//#include <iostream>
 
 void minVC_core::clique()
 {
@@ -6,21 +7,23 @@ void minVC_core::clique()
 
     Graph compl_g = !_g;
 
-    size_t l = 1, m, r = ClLimit(compl_g)+1;
+    size_t l = 0, m, r = ClLimit(compl_g)+1;
     while(l + 1 < r){
         m = l + (r - l)/2;
         test = KCl(compl_g, m);
-        if(test.size() != m){
+        //std::cout << m << ':' << test.size() << '\n';
+        if(test.size() < m){
             r = m;
             if(test.size() > l){
                 l = test.size();
                 result = test;
             }
         } else {
-            l = m;
+            l = test.size();
             result = test;
         }
     }
+    //std::cout.flush();
 
     for (vertex& v : result) {
         _vertex_cover.erase(v);
@@ -34,7 +37,7 @@ size_t minVC_core::ClLimit(Graph &g)
     std::sort(vx.begin(), vx.end(), [&](const vertex& l, const vertex& r){
         return g.deg(l) > g.deg(r);
     });
-    size_t l_lim = 0, m_lim, r_lim = vx.size()-1;
+    size_t l_lim = 0, m_lim, r_lim = vx.size();
     while(l_lim + 1 < r_lim){
         m_lim = l_lim + (r_lim - l_lim)/2;
         if(g.deg(vx[m_lim]) > m_lim){
@@ -65,6 +68,13 @@ vector<vertex> minVC_core::KCl(Graph g, size_t k)
         });
         if(g.deg(vx[0]) + 1 < k){
             return result;
+        }
+        if(g.deg(vx[vx.size()-1]) + 1 == vx.size()){
+            return vx;
+        }
+        if(g.deg(vx[vx.size()-3]) + 1 == vx.size()){
+            vx.resize(vx.size()-1);
+            return vx;
         }
 
         size_t l_tr = 0, m_tr, r_tr = vx.size();
@@ -109,11 +119,11 @@ vector<vertex> minVC_core::KCl(Graph g, size_t k)
             vector<vertex> test = KCl(g.N(t), k - 1);
             test.push_back(t);
 
-            if (test.size() == k){
+            if (test.size() >= k){
                 return test;
             }
 
-            if(test.size() > result.size()){
+            if (test.size() > result.size()){
                 result = test;
             }
 
