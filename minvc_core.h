@@ -12,7 +12,15 @@ using hc = std::chrono::high_resolution_clock;
 enum class VCMode{
     Exhaustive,
     LogNCombK,
-    CliqueOpts,
+    CliqueMinB,
+    CliqueMaxB,
+    CliqueAdapt,
+};
+
+enum class KClMode{
+    MinB,
+    MaxB,
+    Adaptive,
 };
 
 class minVC_core
@@ -40,6 +48,7 @@ private:
     void backtrack(vector<short>& subset);
     void logComb();
 
+    KClMode _cl_mode;
     void clique();
     vector<vertex> KCl(Graph g, size_t k);
     size_t ClLimit(Graph& g);

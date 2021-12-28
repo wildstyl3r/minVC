@@ -80,28 +80,37 @@ void minVC_core::minCover()
     for(const auto& [v, _] : _g.V()){
         _vertex_cover.insert(v);
     }
-
-    vector<short> s;
     hc::time_point begin = hc::now();
-    switch (_mode) {
-    case VCMode::Exhaustive:
-        if (_g.size() > 30) {
-            _nonsense = true;
-            return;
+    if(_g.size()){
+        vector<short> s;
+        switch (_mode) {
+        case VCMode::Exhaustive:
+            if (_g.size() > 30) {
+                _nonsense = true;
+                return;
+            }
+            backtrack(s);
+            break;
+        case VCMode::LogNCombK:
+            if (_g.size() > 33) {
+                _nonsense = true;
+                return;
+            }
+            logComb();
+            break;
+        case VCMode::CliqueMinB:
+            _cl_mode = KClMode::MinB;
+            clique();
+            break;
+        case VCMode::CliqueMaxB:
+            _cl_mode = KClMode::MaxB;
+            clique();
+            break;
+        case VCMode::CliqueAdapt:
+            _cl_mode = KClMode::Adaptive;
+            clique();
+            break;
         }
-        backtrack(s);
-        break;
-    case VCMode::LogNCombK:
-        if (_g.size() > 33) {
-            _nonsense = true;
-            return;
-        }
-        logComb();
-        break;
-    case VCMode::CliqueOpts:
-        clique();
-        break;
-
     }
     hc::time_point end = hc::now();
     _time = end-begin;

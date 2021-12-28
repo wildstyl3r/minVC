@@ -50,7 +50,11 @@ VCMode VC_ui::getVCMode()
     case 1:
         return VCMode::LogNCombK;
     case 2:
-        return VCMode::CliqueOpts;
+        return VCMode::CliqueMinB;
+    case 3:
+        return VCMode::CliqueMaxB;
+    case 4:
+        return VCMode::CliqueAdapt;
     default:
         return VCMode::Exhaustive;
     }

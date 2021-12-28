@@ -85,12 +85,27 @@ vector<vertex> minVC_core::KCl(Graph g, size_t k)
             continue;
         }
 
-        limit = ClLimit(g);//g.deg(vx[r_lim]) + 1;
+        limit = ClLimit(g);
 
         if(limit < k){
             return result;
         } else {
-            vertex t = vx.back();
+            vertex t;
+            switch (_cl_mode) {
+            case KClMode::MinB:
+                t = vx.back();
+                break;
+            case KClMode::MaxB:
+                t = vx.front();
+                break;
+            case KClMode::Adaptive:
+                if(g.density() > 0.5){
+                    t = vx.front();
+                } else {
+                    t = vx.back();
+                }
+                break;
+            }
             vector<vertex> test = KCl(g.N(t), k - 1);
             test.push_back(t);
 

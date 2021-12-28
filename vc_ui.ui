@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
+    <width>646</width>
     <height>250</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>508</width>
+     <width>641</width>
      <height>247</height>
     </rect>
    </property>
@@ -57,7 +57,17 @@
       </item>
       <item>
        <property name="text">
-        <string>через клику с быстрым отсечением</string>
+        <string>через клику с быстрым отсечением (мин. ветвл.)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>через клику с быстрым отсечением (макс. ветвл.)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>через клику с быстрым отсечением (адапт. ветвл.)</string>
        </property>
       </item>
      </widget>
