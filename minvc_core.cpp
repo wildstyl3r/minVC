@@ -5,9 +5,9 @@ minVC_core::minVC_core(VCMode mode)
     _mode = mode;
 }
 
-minVC_core::minVC_core(string filename, VCMode mode)
+minVC_core::minVC_core(string filename, VCMode mode, bool apx_limits, std::function<void()> onstep) :
+    _onstep(onstep), _mode(mode), use_approx_limit(apx_limits)
 {
-    _mode = mode;
     setGraph(filename);
 }
 
@@ -97,16 +97,7 @@ void minVC_core::minCover()
             }
             logComb();
             break;
-        case VCMode::CliqueMinB:
-            _cl_mode = KClMode::MinB;
-            clique();
-            break;
-        case VCMode::CliqueMaxB:
-            _cl_mode = KClMode::MaxB;
-            clique();
-            break;
-        case VCMode::CliqueAdapt:
-            _cl_mode = KClMode::Adaptive;
+        case VCMode::Clique:
             clique();
             break;
         }
@@ -150,4 +141,9 @@ void minVC_core::drawCurrent()
             _g.set_color(v,0);
         }
     }
+}
+
+void minVC_core::useApproxLimit(bool al)
+{
+    use_approx_limit = al;
 }

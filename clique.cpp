@@ -1,5 +1,4 @@
 #include <minvc_core.h>
-//#include <iostream>
 
 void minVC_core::clique()
 {
@@ -7,15 +6,22 @@ void minVC_core::clique()
 
     Graph compl_g = !_g;
 
-    size_t l = 0, m, r = ClLimit(compl_g)+1;
+    size_t l = ClLowerBound(compl_g)-1, m, r = ClUpperBound(compl_g)+1;
+    if(use_approx_limit) {
+        auto apx = approxVC(_g);
+        r = std::min(r, compl_g.size() - apx.size()/2 + 1);
+    }
     while(l + 1 < r){
+        if(_onstep) _onstep();
         m = l + (r - l)/2;
         test = KCl(compl_g, m);
-        //std::cout << m << ':' << test.size() << '\n';
+        if(_onstep)_onstep();
         if(test.size() < m){
             r = m;
             if(test.size() > l){
                 l = test.size();
+            }
+            if(test.size() > result.size()){
                 result = test;
             }
         } else {
@@ -23,7 +29,6 @@ void minVC_core::clique()
             result = test;
         }
     }
-    //std::cout.flush();
 
     for (vertex& v : result) {
         _vertex_cover.erase(v);
@@ -31,7 +36,12 @@ void minVC_core::clique()
     drawCurrent();
 }
 
-size_t minVC_core::ClLimit(Graph &g)
+size_t minVC_core::ClLowerBound(Graph &g)
+{
+    return g.size() / (g.size() - 2 * g.edges() / g.size());
+}
+
+size_t minVC_core::ClUpperBound(Graph &g)
 {
     vector<vertex> vx = g.ids();
     std::sort(vx.begin(), vx.end(), [&](const vertex& l, const vertex& r){
@@ -46,33 +56,32 @@ size_t minVC_core::ClLimit(Graph &g)
             r_lim = m_lim;
         }
     }
-    return g.deg(vx[r_lim]) + 1;
+    return g.deg(vx[l_lim]) + 1;
 }
 
 vector<vertex> minVC_core::KCl(Graph g, size_t k)
 {
     vector<vertex> result;
-    size_t limit;
 
     if(k == 1){
-        if(g.size() > 0){
+        if(g.size()){
             result.push_back(g.V().begin()->first);
         }
         return result;
     }
 
-    while(g.size()){
+    while(g.size() >= k){
         vector<vertex> vx = g.ids();
         std::sort(vx.begin(), vx.end(), [&](const vertex& l, const vertex& r){
             return g.deg(l) > g.deg(r);
         });
-        if(g.deg(vx[0]) + 1 < k){
+        if(g.deg(vx[k-1]) + 1 < k){
             return result;
         }
         if(g.deg(vx[vx.size()-1]) + 1 == vx.size()){
             return vx;
         }
-        if(g.deg(vx[vx.size()-3]) + 1 == vx.size()){
+        if(vx.size() > 2 && g.deg(vx[vx.size()-3]) + 1 == vx.size()){
             vx.resize(vx.size()-1);
             return vx;
         }
@@ -95,40 +104,25 @@ vector<vertex> minVC_core::KCl(Graph g, size_t k)
             continue;
         }
 
-        limit = ClLimit(g);
+        //limit = ClUpperBound(g);
 
-        if(limit < k){
-            return result;
-        } else {
-            vertex t;
-            switch (_cl_mode) {
-            case KClMode::MinB:
-                t = vx.back();
-                break;
-            case KClMode::MaxB:
-                t = vx.front();
-                break;
-            case KClMode::Adaptive:
-                if(g.density() > 0.5){
-                    t = vx.front();
-                } else {
-                    t = vx.back();
-                }
-                break;
-            }
-            vector<vertex> test = KCl(g.N(t), k - 1);
-            test.push_back(t);
+        //if(limit < k){
+        //    return result;
+        //} else {
+        vertex t = vx.back();
+        vector<vertex> test = KCl(g.N(t), k - 1);
+        test.push_back(t);
 
-            if (test.size() >= k){
-                return test;
-            }
-
-            if (test.size() > result.size()){
-                result = test;
-            }
-
-            g.remove_vertex(t);
+        if (test.size() >= k){
+            return test;
         }
+
+        if (test.size() > result.size()){
+            result = test;
+        }
+
+        g.remove_vertex(t);
+        //}
     }
     return result;
 }

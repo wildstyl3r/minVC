@@ -32,14 +32,17 @@ void VC_ui::on_showButton_clicked()
 
 void VC_ui::on_startButton_clicked()
 {
-    coveree = minVC_core(ui->inputPath->text().toStdString(), getVCMode());
+
+    ui->statusLabel->setText("/");
+    status = 0;
+    coveree = minVC_core(ui->inputPath->text().toStdString(), getVCMode(), ui->approxLimitBox->isChecked());
     if(coveree.nonsense()){
         QMessageBox::warning(this, "Эй", "Не надо этого делать. Серьезно, есть более интересные способы тратить время.");
     }
     drawer.drawGraph(coveree.graph());
     QString time = QString::number(std::chrono::duration_cast<std::chrono::milliseconds>(coveree.time()).count()) + " мс";
     drawer.text = "время: " + time + "\nразмер покрытия: " + QString::number(coveree.cover().size());
-    ui->statusLabel->setText(time);
+    ui->statusLabel->setText(time + ", " + QString::number(coveree.cover().size()) + " вершин");
 }
 
 VCMode VC_ui::getVCMode()
@@ -50,11 +53,7 @@ VCMode VC_ui::getVCMode()
     case 1:
         return VCMode::LogNCombK;
     case 2:
-        return VCMode::CliqueMinB;
-    case 3:
-        return VCMode::CliqueMaxB;
-    case 4:
-        return VCMode::CliqueAdapt;
+        return VCMode::Clique;
     default:
         return VCMode::Exhaustive;
     }

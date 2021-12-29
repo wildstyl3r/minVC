@@ -24,6 +24,7 @@ set(PROJECT_SOURCES
     minvc_core.h
     exp.cpp
     log_comb.cpp
+    approx.cpp
     clique.cpp
     vc_ui.cpp
     vc_ui.h

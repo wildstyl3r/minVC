@@ -2,7 +2,13 @@
 
 void minVC_core::logComb()
 {
-    size_t l = 0, m, r = _g.size()-1;
+    size_t l = 0, m, r = _g.size();
+    if(use_approx_limit){
+        auto apx = approxVC(_g);
+        tryCover(apx);
+        l = apx.size()/2;
+        r = apx.size();
+    }
     while(l+1 < r){
         m = l + (r-l)/2;
         if (kCover(m)) {
@@ -15,6 +21,7 @@ void minVC_core::logComb()
 
 bool minVC_core::kCover(size_t k)
 {
+    if(_onstep) _onstep();
     vector<size_t> comb(k);
     for (size_t i = 0; i < k; ++i) {
         comb[i] = i;

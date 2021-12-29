@@ -12,22 +12,14 @@ using hc = std::chrono::high_resolution_clock;
 enum class VCMode{
     Exhaustive,
     LogNCombK,
-    CliqueMinB,
-    CliqueMaxB,
-    CliqueAdapt,
-};
-
-enum class KClMode{
-    MinB,
-    MaxB,
-    Adaptive,
+    Clique,
 };
 
 class minVC_core
 {
 public:
     minVC_core(VCMode mode = VCMode::Exhaustive);
-    minVC_core(string filename, VCMode mode);
+    minVC_core(string filename, VCMode mode, bool apx_limits, std::function<void()> onstep = nullptr);
     minVC_core(Graph& G, VCMode mode);
     const Graph* graph() const;
     VCMode mode() const;
@@ -35,9 +27,10 @@ public:
     void setMode(VCMode mode);
     void setGraph(Graph& G);
     void setGraph(string filename);
-    void setStepCallback(std::function<void()> = nullptr);
+    void setStepCallback(std::function<void()> onstep = nullptr);
     bool isCover(std::set<vertex>& test);
     bool nonsense();
+    void useApproxLimit(bool al);
     std::set<vertex> cover();
 private:
     bool _nonsense = false;
@@ -48,10 +41,12 @@ private:
     void backtrack(vector<short>& subset);
     void logComb();
 
-    KClMode _cl_mode;
+    std::set<vertex> approxVC(Graph test);
+
     void clique();
     vector<vertex> KCl(Graph g, size_t k);
-    size_t ClLimit(Graph& g);
+    size_t ClUpperBound(Graph& g);
+    size_t ClLowerBound(Graph& g);
 
     bool kCover(size_t k);
     void drawCurrent();
@@ -59,6 +54,7 @@ private:
     Graph _g;
     std::set<vertex> _vertex_cover;
     hc::duration _time;
+    bool use_approx_limit;
 };
 
 #endif // MINVC_CORE_H

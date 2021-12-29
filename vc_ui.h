@@ -33,7 +33,10 @@ private:
     Ui::VC_ui *ui;
     QGrypho drawer;
     minVC_core coveree;
+    unsigned char status;
+    const QString statuses[4] = {"-", "\\", "|", "/"};
     VCMode getVCMode();
 };
+
 
 #endif // VC_UI_H
