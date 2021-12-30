@@ -1,4 +1,5 @@
 #include "minvc_core.h"
+#include <queue>
 
 minVC_core::minVC_core(VCMode mode)
 {
@@ -81,6 +82,9 @@ void minVC_core::minCover()
     }
     hc::time_point begin = hc::now();
     if(_g.size()){
+        if(tryBipartiteVC()){
+            return;
+        }
         vector<short> s;
         switch (_mode) {
         case VCMode::Exhaustive:
@@ -146,4 +150,92 @@ void minVC_core::drawCurrent()
 void minVC_core::useApproxLimit(bool al)
 {
     use_approx_limit = al;
+}
+
+unordered_map<vertex, bool> minVC_core::partition(Graph &g)
+{
+    unordered_map<vertex, bool> part;
+
+    for (auto& [w, _] : g.V()){
+        if (!part.count(w)) {
+            std::queue<vertex> bfs;
+            part[w] = true;
+            bfs.push(w);
+            while(!bfs.empty()){
+                vertex v = bfs.front();
+                bfs.pop();
+                for(const vertex& u : g.V(v)){
+                    if(!part.count(u)) {
+                        part[u] = !part[v];
+                        bfs.push(u);
+                    } else {
+                        if(part[u] == part[v])
+                            return {};
+                    }
+                }
+            }
+        }
+    }
+    return part;
+}
+
+bool minVC_core::KuhnMatching(const vertex &v)
+{
+    if(used[v])
+        return false;
+    used[v] = true;
+    for(const vertex& u : _g.V(v)){
+        if(!matching.count(u) || KuhnMatching(u)){
+            matching[u] = v;
+            return true;
+        }
+    }
+    return false;
+}
+
+void minVC_core::biVC(const vertex &v, unordered_map<vertex, bool>& part)
+{
+    if(used[v])
+        return;
+    used[v] = true;
+    for(const vertex& u : _g.V(v)){
+        if(matching.count(v) && matching[v] == u){
+            if(part[u] == true){
+                biVC(u, part);
+            }
+        } else {
+            if(part[u] == false){// && part[v] == true) {
+                biVC(u, part);
+            }
+        }
+    }
+    return;
+}
+
+bool minVC_core::tryBipartiteVC()
+{
+    unordered_map<vertex, bool> part = partition(_g);
+    if(part.size()) {
+        matching.clear();
+        for(auto& [v, _] : _g.V()) {
+            used.clear();
+            KuhnMatching(v);
+        }
+        used.clear();
+        for(auto& [v, isA] : part){
+            if(isA && !matching.count(v)){
+                biVC(v, part);
+            }
+        }
+        std::set<vertex> bcover;
+        for(auto& [v, _] : _g.V()) {
+            if((part[v] == true && !used[v]) || (part[v] == false && used[v])){
+                bcover.insert(v);
+            }
+        }
+
+        return tryCover(bcover);
+    } else {
+        return false;
+    }
 }

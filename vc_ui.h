@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QFileDialog>
+#include <QTextStream>
 #include <QGrypho.hpp>
 #include <QMessageBox>
 #include <minvc_core.h>

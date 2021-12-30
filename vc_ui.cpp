@@ -42,7 +42,20 @@ void VC_ui::on_startButton_clicked()
     drawer.drawGraph(coveree.graph());
     QString time = QString::number(std::chrono::duration_cast<std::chrono::milliseconds>(coveree.time()).count()) + " мс";
     drawer.text = "время: " + time + "\nразмер покрытия: " + QString::number(coveree.cover().size());
+    drawer.setWindowTitle(ui->inputPath->text());
     ui->statusLabel->setText(time + ", " + QString::number(coveree.cover().size()) + " вершин");
+    if(ui->outputPath->text() != ""){
+        QFile file(ui->outputPath->text());
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)){
+            QTextStream out(&file);
+            for(const vertex& v : coveree.cover()){
+                out << QString::fromStdString(v) << ' ';
+            }
+            out << '\n' + drawer.text;
+        } else {
+            ui->statusLabel->setText(ui->statusLabel->text() + "; ошибка ввода-вывода");
+        }
+    }
 }
 
 VCMode VC_ui::getVCMode()

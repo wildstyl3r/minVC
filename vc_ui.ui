@@ -10,6 +10,18 @@
     <height>253</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>644</width>
+    <height>253</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>644</width>
+    <height>253</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Вершинное покрытие</string>
   </property>
@@ -23,6 +35,9 @@
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="inputPath"/>
+    </item>
     <item row="0" column="0">
      <widget class="QPushButton" name="inputButton">
       <property name="text">
@@ -30,28 +45,20 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QCheckBox" name="approxLimitBox">
-        <property name="text">
-         <string>Определить границы аппроксимацией</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="startButton">
-        <property name="text">
-         <string>Запуск</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="outputButton">
+    <item row="6" column="0" colspan="2">
+     <widget class="QPushButton" name="showButton">
       <property name="text">
-       <string>Вывод</string>
+       <string>Показать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="2">
+     <widget class="QLabel" name="statusLabel">
+      <property name="text">
+       <string>_</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -62,13 +69,6 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QPushButton" name="showButton">
-      <property name="text">
-       <string>Показать</string>
       </property>
      </widget>
     </item>
@@ -91,21 +91,33 @@
       </item>
      </widget>
     </item>
+    <item row="5" column="0" colspan="2">
+     <widget class="QPushButton" name="startButton">
+      <property name="text">
+       <string>Запуск</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="outputButton">
+      <property name="text">
+       <string>Вывод</string>
+      </property>
+     </widget>
+    </item>
     <item row="2" column="1">
      <widget class="QLineEdit" name="outputPath"/>
     </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="inputPath"/>
-    </item>
-    <item row="5" column="0" colspan="2">
-     <widget class="QLabel" name="statusLabel">
-      <property name="text">
-       <string>_</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
+    <item row="3" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QCheckBox" name="approxLimitBox">
+        <property name="text">
+         <string>Определить границы аппроксимацией</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

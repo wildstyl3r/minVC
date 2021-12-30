@@ -41,6 +41,12 @@ private:
     void backtrack(vector<short>& subset);
     void logComb();
 
+    unordered_map<vertex, bool> used;
+    unordered_map<vertex, vertex> matching;
+    unordered_map<vertex, bool> partition(Graph& g);
+    void biVC(const vertex& v, unordered_map<vertex, bool>& part);
+    bool tryBipartiteVC();
+    bool KuhnMatching(const vertex& v);
     std::set<vertex> approxVC(Graph test);
 
     void clique();

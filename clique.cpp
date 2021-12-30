@@ -104,11 +104,6 @@ vector<vertex> minVC_core::KCl(Graph g, size_t k)
             continue;
         }
 
-        //limit = ClUpperBound(g);
-
-        //if(limit < k){
-        //    return result;
-        //} else {
         vertex t = vx.back();
         vector<vertex> test = KCl(g.N(t), k - 1);
         test.push_back(t);
@@ -122,7 +117,6 @@ vector<vertex> minVC_core::KCl(Graph g, size_t k)
         }
 
         g.remove_vertex(t);
-        //}
     }
     return result;
 }
